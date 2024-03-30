@@ -2,6 +2,9 @@
 #include <unordered_map>
 #include <sstream> // for std::stringstream
 
+static const int NUM_ITERATIONS = 10;
+static  const std::string FILE_HEADER = "#Life 1.06";
+
 using namespace std;
 
 // Define a hash function for pairs of integers (coordinates)
@@ -73,6 +76,10 @@ void simulateGameOfLife(unordered_map<pair<int, int>, bool, PairHash>& board)
 // Function to print the board in Life 1.06 format
 void printBoard(unordered_map<pair<int, int>, bool, PairHash>& board)
 {
+    printf("Result of %d iterations:\n", NUM_ITERATIONS);
+
+    cout << FILE_HEADER << endl;
+
     for (auto& cell : board)
     {
         if (cell.second)
@@ -85,32 +92,45 @@ void printBoard(unordered_map<pair<int, int>, bool, PairHash>& board)
 int main()
 {
     cout << "Game of Life" << endl;
+    cout << "Enter starting board in the Life 1.06 format..." << endl;
 
-    // Read input
-    unordered_map<pair<int, int>, bool, PairHash> board;
-    string line;
-    while (getline(cin, line))
+    unordered_map<pair<int, int>, bool, PairHash> Board;
+
+    string Line;
+    bool bValidFormat = true;
+
+    // Make sure the input starts with the Life 1.06 header
+    if (getline(cin, Line) && Line != FILE_HEADER)
     {
-        int x, y;
-        stringstream ss(line);
-        if (ss >> x >> y)
+        return 1;
+    }
+
+    // Read input and parse pairs into the starting board
+    while (getline(cin, Line) && bValidFormat)
+    {
+        int X, Y;
+        stringstream ss(Line);
+        if (ss >> X >> Y)
         {
-            board[{x, y}] = true; // mark live cells
+            // Mark live cells
+            Board[{X, Y}] = true;
         }
         else
         {
+            // End of user input, or invalid pair
+            bValidFormat = false;
             break;
         }
     }
 
-    // Simulate 10 iterations of Game of Life
-    for (int i = 0; i < 10; ++i)
+    // Simulate iterations of Game of Life
+    for (int i = 0; i < NUM_ITERATIONS; ++i)
     {
-        simulateGameOfLife(board);
+        simulateGameOfLife(Board);
     }
 
     // Print the final board state
-    printBoard(board);
+    printBoard(Board);
 
     return 0;
 }
