@@ -48,7 +48,7 @@ int countLiveNeighbors(const pair<int64_t, int64_t>& cell, const unordered_set<p
             const int64_t curY = (y + dy);
             const pair<int64_t, int64_t> curCell = { curX, curY };
 
-            // Check if the cell exists in the board (only contains live cells)
+            // Check if the neighbor cell exists in the board (only contains live cells)
             if (board.find(curCell) != board.end())
             {
                 liveCount++;
