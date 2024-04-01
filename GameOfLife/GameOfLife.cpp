@@ -26,9 +26,12 @@ struct PairHash
 };
 
 // Function to count live neighbors of a cell
-int countLiveNeighbors(int64_t x, int64_t y, const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
+int countLiveNeighbors(const pair<int64_t, int64_t>& cell, const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
     int liveCount = 0;
+
+    const int64_t x = cell.first;
+    const int64_t y = cell.second;
 
     // Offset delta coordinates in 8 cardinal directions
     for (int dx = -1; dx <= 1; ++dx)
@@ -59,11 +62,10 @@ int countLiveNeighbors(int64_t x, int64_t y, const unordered_set<pair<int64_t, i
 // Checks if a cell will be alive or not in the next generation
 bool isAlive(const pair<pair<int64_t, int64_t>, bool>& cellState, const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
-    const int64_t x = cellState.first.first;
-    const int64_t y = cellState.first.second;
+    const pair<int64_t, int64_t> cell = cellState.first;
     const bool bIsAlive = cellState.second;
 
-    const int liveNeighbors = countLiveNeighbors(x, y, board);
+    const int liveNeighbors = countLiveNeighbors(cell, board);
 
     // If cell is alive
     if (bIsAlive)
@@ -104,7 +106,7 @@ pair<pair<int64_t, int64_t>, bool> getCurrentCellState(const unordered_set<pair<
 // Function to simulate one generation of Game of Life
 unordered_set<pair<int64_t, int64_t>, PairHash> simulateGameOfLife(const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
-    // If there's a cell in this new board, it's a live cell
+    // If there's a cell in this new board, it's a live cell in the next generation
     unordered_set<pair<int64_t, int64_t>, PairHash> newBoard;
 
     // Keep a cache of the alive/dead cells we've already tested during this simulation step, to avoid retesting the same cells
@@ -117,7 +119,7 @@ unordered_set<pair<int64_t, int64_t>, PairHash> simulateGameOfLife(const unorder
         const int64_t x = cell.first;
         const int64_t y = cell.second;
 
-        // We need to test all of its neighbors too, in case they become alive
+        // We need to test all of the cell's neighbors too, in case they become alive
         for (int dx = -1; dx <= 1; ++dx)
         {
             for (int dy = -1; dy <= 1; ++dy)
