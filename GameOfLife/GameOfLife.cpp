@@ -1,10 +1,15 @@
+#include <algorithm>
+#include <cstdint>
 #include <iostream>
+#include <sstream>
 #include <unordered_map>
 #include <unordered_set>
-#include <sstream>
+#include <utility>
+#include <vector>
 
 static const int NUM_GENERATIONS = 10;
-static  const std::string FILE_HEADER = "#Life 1.06";
+static const std::string FILE_HEADER = "#Life 1.06";
+static const bool SORT_RESULTS = true;
 
 using namespace std;
 
@@ -144,6 +149,19 @@ std::unordered_set<std::pair<int64_t, int64_t>, PairHash> simulateGameOfLife(con
     return newBoard;
 }
 
+// Custom comparison function to sort pairs by both first and second elements
+bool comparePairs(const std::pair<int64_t, int64_t>& a, const std::pair<int64_t, int64_t>& b)
+{
+    if (a.first != b.first)
+    {
+        return a.first < b.first; // Sort by first element
+    }
+    else
+    {
+        return a.second < b.second; // If first elements are equal, sort by second element
+    }
+}
+
 // Function to print the board in Life 1.06 format
 void printBoard(const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>& board)
 {
@@ -152,10 +170,25 @@ void printBoard(const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>&
     // Print the Life 1.06 file header
     cout << FILE_HEADER << endl;
 
-    // Print all the cell coordinates
-    for (auto& cell : board)
+    if (SORT_RESULTS)
     {
-        cout << cell.first << " " << cell.second << endl;
+        // Copy elements to a vector
+        std::vector<std::pair<int64_t, int64_t>> sortedBoard(board.begin(), board.end());
+
+        // Sort the vector using the custom comparison function
+        std::sort(sortedBoard.begin(), sortedBoard.end(), comparePairs);
+
+        for (auto& cell : sortedBoard)
+        {
+            cout << cell.first << " " << cell.second << endl;
+        }
+    }
+    else
+    {
+        for (auto& cell : board)
+        {
+            cout << cell.first << " " << cell.second << endl;
+        }
     }
 }
 
