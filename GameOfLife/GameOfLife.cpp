@@ -94,26 +94,26 @@ int main()
     cout << "Game of Life" << endl;
     cout << "Enter starting board in the Life 1.06 format..." << endl;
 
-    unordered_map<pair<int, int>, bool, PairHash> Board;
+    unordered_map<pair<int, int>, bool, PairHash> board;
 
-    string Line;
+    string line;
     bool bValidFormat = true;
 
     // Make sure the input starts with the Life 1.06 header
-    if (getline(cin, Line) && Line != FILE_HEADER)
+    if (getline(cin, line) && line != FILE_HEADER)
     {
         return 1;
     }
 
     // Read input and parse pairs into the starting board
-    while (getline(cin, Line) && bValidFormat)
+    while (getline(cin, line) && bValidFormat)
     {
         int X, Y;
-        stringstream ss(Line);
+        stringstream ss(line);
         if (ss >> X >> Y)
         {
             // Mark live cells
-            Board[{X, Y}] = true;
+            board[{X, Y}] = true;
         }
         else
         {
@@ -126,11 +126,11 @@ int main()
     // Simulate iterations of Game of Life
     for (int i = 0; i < NUM_ITERATIONS; ++i)
     {
-        simulateGameOfLife(Board);
+        simulateGameOfLife(board);
     }
 
     // Print the final board state
-    printBoard(Board);
+    printBoard(board);
 
     return 0;
 }
