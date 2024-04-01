@@ -7,26 +7,26 @@
 #include <utility>
 #include <vector>
 
-static const int NUM_GENERATIONS = 10;
-static const std::string FILE_HEADER = "#Life 1.06";
-static const bool SORT_RESULTS = true;
-
 using namespace std;
+
+static const int NUM_GENERATIONS = 10;
+static const string FILE_HEADER = "#Life 1.06";
+static const bool SORT_RESULTS = true;
 
 // Define a hash function for pairs of integers (cell coordinates)
 struct PairHash
 {
     template <class T1, class T2>
-    std::size_t operator() (const std::pair<T1, T2>& p) const
+    size_t operator() (const pair<T1, T2>& p) const
     {
-        auto hash1 = std::hash<T1>{}(p.first);
-        auto hash2 = std::hash<T2>{}(p.second);
+        auto hash1 = hash<T1>{}(p.first);
+        auto hash2 = hash<T2>{}(p.second);
         return hash1 ^ hash2;
     }
 };
 
 // Function to count live neighbors of a cell
-int countLiveNeighbors(int64_t x, int64_t y, const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>& board)
+int countLiveNeighbors(int64_t x, int64_t y, const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
     int liveCount = 0;
 
@@ -43,7 +43,7 @@ int countLiveNeighbors(int64_t x, int64_t y, const std::unordered_set<std::pair<
 
             const int64_t curX = (x + dx);
             const int64_t curY = (y + dy);
-            const std::pair<int64_t, int64_t> curCell = { curX, curY };
+            const pair<int64_t, int64_t> curCell = { curX, curY };
 
             // Check if the cell exists in the board (only contains live cells)
             if (board.find(curCell) != board.end())
@@ -57,7 +57,7 @@ int countLiveNeighbors(int64_t x, int64_t y, const std::unordered_set<std::pair<
 }
 
 // Checks if a cell will be alive or not in the next generation
-bool isAlive(const pair<pair<int64_t, int64_t>, bool>& cellState, const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>& board)
+bool isAlive(const pair<pair<int64_t, int64_t>, bool>& cellState, const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
     const int64_t x = cellState.first.first;
     const int64_t y = cellState.first.second;
@@ -95,24 +95,24 @@ bool isAlive(const pair<pair<int64_t, int64_t>, bool>& cellState, const std::uno
 }
 
 // Helper function to construct a pair of cell + its alive/dead state using the board of live cells
-std::pair<std::pair<int64_t, int64_t>, bool> getCurrentCellState(const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>& board, const std::pair<int64_t, int64_t>& cell)
+pair<pair<int64_t, int64_t>, bool> getCurrentCellState(const unordered_set<pair<int64_t, int64_t>, PairHash>& board, const pair<int64_t, int64_t>& cell)
 {
     const bool bIsAlive = (board.find(cell) != board.end()); // If the cell is in the board, it's alive
-    return std::make_pair(cell, bIsAlive);
+    return make_pair(cell, bIsAlive);
 }
 
 // Function to simulate one generation of Game of Life
-std::unordered_set<std::pair<int64_t, int64_t>, PairHash> simulateGameOfLife(const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>& board)
+unordered_set<pair<int64_t, int64_t>, PairHash> simulateGameOfLife(const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
     // If there's a cell in this new board, it's a live cell
-    std::unordered_set<std::pair<int64_t, int64_t>, PairHash> newBoard;
+    unordered_set<pair<int64_t, int64_t>, PairHash> newBoard;
 
     // Keep a cache of the alive/dead cells we've already tested during this simulation step, to avoid retesting the same cells
     // (common occurrence when testing grid around 2 live cells that are touching)
     unordered_map<pair<int64_t, int64_t>, bool, PairHash> testHistory;
 
     // Iterate over the live cells in the current board
-    for (const std::pair<int64_t, int64_t>& cell : board)
+    for (const pair<int64_t, int64_t>& cell : board)
     {
         const int64_t x = cell.first;
         const int64_t y = cell.second;
@@ -124,7 +124,7 @@ std::unordered_set<std::pair<int64_t, int64_t>, PairHash> simulateGameOfLife(con
             {
                 const int64_t curX = (x + dx);
                 const int64_t curY = (y + dy);
-                const std::pair<int64_t, int64_t> curCell = { curX, curY };
+                const pair<int64_t, int64_t> curCell = { curX, curY };
 
                 const bool bAlreadyTested = (testHistory.find(curCell) != testHistory.end());
 
@@ -150,7 +150,7 @@ std::unordered_set<std::pair<int64_t, int64_t>, PairHash> simulateGameOfLife(con
 }
 
 // Custom comparison function to sort pairs by both first and second elements
-bool comparePairs(const std::pair<int64_t, int64_t>& a, const std::pair<int64_t, int64_t>& b)
+bool comparePairs(const pair<int64_t, int64_t>& a, const pair<int64_t, int64_t>& b)
 {
     if (a.first != b.first)
     {
@@ -163,7 +163,7 @@ bool comparePairs(const std::pair<int64_t, int64_t>& a, const std::pair<int64_t,
 }
 
 // Function to print the board in Life 1.06 format
-void printBoard(const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>& board)
+void printBoard(const unordered_set<pair<int64_t, int64_t>, PairHash>& board)
 {
     printf("Result of %d generations:\n", NUM_GENERATIONS);
 
@@ -173,10 +173,10 @@ void printBoard(const std::unordered_set<std::pair<int64_t, int64_t>, PairHash>&
     if (SORT_RESULTS)
     {
         // Copy elements to a vector
-        std::vector<std::pair<int64_t, int64_t>> sortedBoard(board.begin(), board.end());
+        vector<pair<int64_t, int64_t>> sortedBoard(board.begin(), board.end());
 
         // Sort the vector using the custom comparison function
-        std::sort(sortedBoard.begin(), sortedBoard.end(), comparePairs);
+        sort(sortedBoard.begin(), sortedBoard.end(), comparePairs);
 
         for (auto& cell : sortedBoard)
         {
@@ -198,7 +198,7 @@ int main()
     cout << "Enter starting board in the Life 1.06 format..." << endl;
 
     // Store only the alive cells in the board as an unordered set (unique entries only, O(1) constant lookup and insertion)
-    std::unordered_set<std::pair<int64_t, int64_t>, PairHash> board;
+    unordered_set<pair<int64_t, int64_t>, PairHash> board;
 
     // Start parsing cin
     string line;
@@ -218,7 +218,7 @@ int main()
         if (ss >> x >> y)
         {
             // Mark live cells
-            board.insert(std::make_pair(x, y));
+            board.insert(make_pair(x, y));
         }
         else
         {
